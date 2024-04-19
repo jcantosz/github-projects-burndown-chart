@@ -1,0 +1,30 @@
+name: Generate Burndown Chart
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  generateChart:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - run: pip install -r requirements.txt
+
+      - name: Generate Burndown Chart
+        run: |
+          export SPRINT_START_DATE=$(date --date="14 days ago" +"%Y-%m-%d")
+          export SPRINT_END_DATE=$(date +"%Y-%m-%d")
+          python ./src/github_projects_burndown_chart/main.py organization my-test-proj --filepath ./chart.png
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chart
+          path: chart.png

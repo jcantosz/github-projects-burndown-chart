@@ -87,7 +87,10 @@ class Card:
 
     def __parse_points(self, card_data) -> int:
         card_points = 0
-        points_label = config['settings']['points_label']
+
+        points_label = None
+        if points_label in config['settings']:
+            points_label = config['settings']['points_label']
         if not points_label:
             card_points = 1
         else:

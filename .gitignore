@@ -1,6 +1,6 @@
 # Local config files
 secrets.json
-config.json
+# config.json
 
 # VS Code Project Files
 .vscode

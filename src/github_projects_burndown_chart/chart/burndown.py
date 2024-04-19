@@ -78,6 +78,7 @@ class BurndownChart:
                    slope=-(self.data.total_points/(sprint_days)),
                    **self.data.ideal_trendline_format)
 
+
     def generate_chart(self, path):
         self.__prepare_chart()
 
@@ -87,5 +88,5 @@ class BurndownChart:
         plt.savefig(path)
 
     def render(self):
-        self.__prepare_chart()
+        self.__prepare_chart()  
         plt.show()

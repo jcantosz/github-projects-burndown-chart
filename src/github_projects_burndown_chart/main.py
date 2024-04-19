@@ -36,6 +36,10 @@ def download_project_data(project_type: str, project_version: int) -> Project:
 
 def prepare_chart_data(stats: ProjectStats):
     color = colors()
+    points_label = "Outstanding Issues"
+    if 'points_label' in config['settings']:
+        points_label = "Outstanding Points"
+
     data = BurndownChartData(
         sprint_name=stats.project.name,
         utc_chart_start=config.utc_sprint_start(),
@@ -51,7 +55,8 @@ def prepare_chart_data(stats: ProjectStats):
                 format=dict(color=next(color))
             ) for pts_type in config['settings'].get('calculators', ['closed'])
         ],
-        points_label=f"Outstanding {'Points' if config['settings']['points_label'] else 'Issues'}"
+
+        points_label=points_label
     )
     return data
 

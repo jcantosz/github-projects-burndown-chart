@@ -42,13 +42,38 @@ class Config:
         self.project_type = project_type
         self.project_name = project_name
 
+    # Hacks to support env vars ---
+    def getSprintStartDate(self):
+        if os.environ.get('SPRINT_START_DATE'):
+            return os.environ.get('SPRINT_START_DATE')
+        else:
+            return self['settings']['sprint_start_date']
+
+    def getSprintEndDate(self):
+        if os.environ.get('SPRINT_END_DATE'):
+            return os.environ.get('SPRINT_END_DATE')
+        else:
+            return self['settings']['sprint_end_date']
+
+    def getChartEndDate(self):
+        if os.environ.get('CHART_END_DATE'):
+            return os.environ.get('CHART_END_DATE')
+        elif os.environ.get('SPRINT_END_DATE'):
+            return os.environ.get('SPRINT_END_DATE')
+        else:
+            return self['settings']['chart_end_date'] or self['settings']['sprint_end_date']
+    # --- End hacks to support env vars
+
     def utc_sprint_start(self) -> datetime:
+        self['settings']['sprint_start_date'] = self.getSprintStartDate()
         return self.__get_date('sprint_start_date')
 
     def utc_sprint_end(self) -> datetime:
+        self['settings']['sprint_end_date'] = self.getSprintEndDate()
         return self.__get_date('sprint_end_date')
 
     def utc_chart_end(self) -> datetime:
+        self['settings']['chart_end_date'] = self.getChartEndDate()
         return self.__get_date('chart_end_date')
 
     def __getitem__(self, key: str):
@@ -62,7 +87,6 @@ class Config:
         date = self['settings'].get(name)
         return parse_to_utc(date) if date else None
 
-
 config = Config(__config)
 
 
@@ -70,8 +94,12 @@ config = Config(__config)
 # Load secrets.json
 ###############################################################################
 try:
-    with open(os.path.join(__location__, 'secrets.json')) as secrets_json:
-        secrets = json.load(secrets_json)
+    if os.environ['GITHUB_TOKEN']:
+        secrets = {'github_token': os.environ['GITHUB_TOKEN']}
+    else:
+        with open(os.path.join(__location__, 'secrets.json')) as secrets_json:
+            secrets = json.load(secrets_json)
+
 except FileNotFoundError as err:
     __logger.critical(err)
     __logger.critical('Please create a secrets.json file in the config '
