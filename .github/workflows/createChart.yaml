@@ -8,7 +8,7 @@ jobs:
   generateChart:
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.PAT }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
