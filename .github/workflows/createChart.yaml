@@ -4,6 +4,8 @@ on:
     branches:
       - main
 
+env:
+  sprint_length_in_days: 14
 jobs:
   generateChart:
     runs-on: ubuntu-latest
@@ -20,11 +22,21 @@ jobs:
 
       - run: pip install -r requirements.txt
 
+      - name: Calculate Start and End Dates
+        run: |
+          SPRINT_START_DATE=$(date --date="${{ env.sprint_length_in_days }} days ago" +"%Y-%m-%d")
+          echo "SPRINT_START_DATE=${SPRINT_START_DATE}" >> ${GITHUB_OUTPUT}
+          
+          SPRINT_END_DATE=$(date +"%Y-%m-%d")
+          echo "SPRINT_END_DATE=${SPRINT_END_DATE}" >> ${GITHUB_OUTPUT}
+          
       - name: Generate Burndown Chart
         run: |
-          export SPRINT_START_DATE=$(date --date="14 days ago" +"%Y-%m-%d")
-          export SPRINT_END_DATE=$(date +"%Y-%m-%d")
           python ./src/github_projects_burndown_chart/main.py organization my-test-proj --filepath ./chart.png
+
+      - name: Job Summary
+        run: |
+          echo "Generated chart for sprint between ${SPRINT_START_DATE} - ${SPRINT_END_DATE}" >> $GITHUB_STEP_SUMMARY
 
       - uses: actions/upload-artifact@v4
         with:
