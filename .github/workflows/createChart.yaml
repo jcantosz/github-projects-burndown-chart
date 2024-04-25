@@ -61,6 +61,7 @@ jobs:
 
       - name: Create an issue with the chart
         run: |
-          gh issue create --title "Sprint ending in ${SPRINT_END_DATE}" --body "![chart.png](github.com/${github.repository}/releases/download/migration/chart.png)"
+          echo "![chart.png](github.com/${{ github.repository }}/releases/download/migration/chart.png)" >> $GITHUB_STEP_SUMMARY
+          gh issue create --title "Sprint ending in ${SPRINT_END_DATE}" --body "![chart.png](github.com/${{ github.repository }}/releases/download/migration/chart.png)"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
