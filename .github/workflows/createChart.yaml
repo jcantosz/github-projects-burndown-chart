@@ -61,12 +61,10 @@ jobs:
 
       - name: Create an issue with the chart
         run: |
-          echo ${{ github.repository }}
-          echo ${SPRINT_END_DATE}
-          echo "![chart.png](github.com/${{ github.repository }}/releases/download/${SPRINT_END_DATE}/chart.png)"
-          echo "github.com/${{ github.repository }}/releases/download/${SPRINT_END_DATE}/chart.png"
+          CHART_LINK='![chart.png](https://github.com/${{ github.repository }}/releases/download/${{ env.SPRINT_END_DATE }}/chart.png)'
+          echo "${CHART_LINK}"
           
-          echo "![chart.png](github.com/${{ github.repository }}/releases/download/${SPRINT_END_DATE}/chart.png)" >> $GITHUB_STEP_SUMMARY
-          gh issue create --title "Sprint ending in ${SPRINT_END_DATE}" --body "![chart.png](github.com/${{ github.repository }}/releases/download/${SPRINT_END_DATE}/chart.png)"
+          echo "<br />${CHART_LINK}" >> $GITHUB_STEP_SUMMARY
+          gh issue create --title "Sprint ending in ${SPRINT_END_DATE}" --body "<br />${CHART_LINK}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
